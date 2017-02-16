@@ -52,7 +52,7 @@ def svm_clf(gs, fit_data):
                 print('Пример ошибки машины: class = ', obj[0], ', label = ', label, ', экземпляр ', obj[1:])
             wrong += 1
         i += 1
-    print (wrong/float(i))
+    print ('Error', wrong/float(i))
 
 if __name__ == '__main__':
     with open('anna.txt', encoding='utf-8') as f:
@@ -60,15 +60,19 @@ if __name__ == '__main__':
     with open('sonets.txt', encoding='utf-8') as f:
         sonets = f.read()
 
-    anna_data = np.array(features(anna))
+    anna_data = np.array(features(anna))[:1360]
     sonet_data = np.array(features(sonets))
 
     pca(anna_data, sonet_data)
 
-    fit_anna = np.array([[0] + el for el in features(anna)])
-    fit_sonets = np.array([[1] + el for el in features(sonets)])
+    fit_anna = np.insert(anna_data, 0, 0, axis=1)
+    fit_sonets = np.insert(sonet_data, 0, 1, axis=1)
+
     fit_data = np.vstack((fit_anna, fit_sonets))
 
     gs = cross_v(fit_data)
     svm_clf(gs, fit_data)
 
+# фичи не позволяют различить точно тексты разных жанров
+# алгоритм в равной степени ошибается в классах (ни один из классов в ошибках не превалирует)
+# точность каждый раз немного отличается (алгоритм часто не может решить точно, к какому классу отнести предложение)
